@@ -1,35 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
-class App extends React.Component {
-  render() {
+const data = {
+  name: '',
+  content: '',
+  description: ''
+}
+
+const App = () => {
+    const [ state, setState ] = useState({ events: [], template: { ...data } });
+    const { events } = state;
+    
+
+    const handelInputChange = (event) => {
+      const { name, value } = event.target;
+      const { template } = state;
+
+      const newTemplate = {
+        ...template,
+        [name]: value
+      }
+
+      setState({
+        ...state,
+        template: newTemplate
+      })
+
+    }
+
+    const handleButtonSubmit = () => {
+      const { template, events } = state;
+      if(template.name && template.description) {
+        setState({
+          ...state,
+          events   : [...events, template],
+          template : {}
+        })
+      }
+    }
+    const { template: { name, content, description } } = state;
     return (
       <div className="App">
         <div className="create-event">
-          <div class="form-group row">
-            <input type="text" className="form-control" id="name" placeholder="Event Name" />
+          <div className="form-group row">
+            <input type="text" onChange={handelInputChange} value={name} name="name" className="form-control" id="name" placeholder="Event Name" />
           </div>
-          <div class="form-group row">
-            <input type="text" className="form-control" id="description" placeholder="Description" />
+          <div className="form-group row">
+            <input type="text" onChange={handelInputChange} value={description} name="description" className="form-control" id="description" placeholder="Description" />
           </div>
-          <div class="form-group row">
-            <input type="text" className="form-control" id="content" placeholder="Content" />
+          <div className="form-group row">
+            <input type="text" onChange={handelInputChange} value={content} name="content" className="form-control" id="content" placeholder="Content" />
           </div>
-          <button type="button" class="btn btn-primary">Create</button>
+          <button type="button" onClick={handleButtonSubmit} className="btn btn-primary">Create</button>
         </div>
         <div className="events-tabel">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+         {events.map((item) => {
+           return (
+            <div key={item.name} className="card">
+              <div className="card-body">
+                <h5 className="card-title">{item.name}</h5>
+                <h6 className="card-subtitle mb-2 text-muted">{item.description}</h6>
+                <p className="card-text">{item.content}</p>
+              </div>
             </div>
-          </div>
+           )
+         })}
         </div>
       </div>
     );
   }
-}
 
 export default App;
